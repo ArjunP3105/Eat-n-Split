@@ -23,26 +23,26 @@ const initialFriends = [
 
 export default function App() {
   const [friendlist, setfriendlist] = useState([...initialFriends]);
-  const [isopenid, setIsopenid] = useState(null);
+  const [isopen, setIsopen] = useState(null);
   const [bill, setbill] = useState({
     total: 0,
     U_expense: 0,
     Friend_expense: 0,
     Paying_user: "you",
   });
-  function setId(id) {
-    setIsopenid(id);
+  function setId(friend) {
+    setIsopen(friend);
   }
 
   function addtolist(friend) {
     setfriendlist((i) => [...i, friend]);
   }
 
-  const selected_friend = friendlist.find((friend) => friend.id === isopenid);
+  const selected_friend = isopen;
   return (
     <div className="app">
       <Friendlist
-        isopenid={isopenid}
+        isopenf={isopen}
         setId={setId}
         setbill={setbill}
         friendlist={friendlist}
@@ -52,7 +52,7 @@ export default function App() {
         <SplitBill
           bill={bill}
           setbill={setbill}
-          isopenid={isopenid}
+          isopen={isopen}
           friend={selected_friend}
           setfriendlist={setfriendlist}
         />
@@ -61,7 +61,7 @@ export default function App() {
   );
 }
 
-function Friendlist({ isopenid, setId, setbill, friendlist, Addtolist }) {
+function Friendlist({ isopenf, setId, setbill, friendlist, Addtolist }) {
   const [isopen, setisopen] = useState(false);
   const [addfriend, setaddfriend] = useState({
     id: Date.now(),
@@ -79,6 +79,7 @@ function Friendlist({ isopenid, setId, setbill, friendlist, Addtolist }) {
     };
     Addtolist(newfriend);
     setaddfriend({ id: "", name: "", image: "", balance: 0 });
+    setisopen(false);
   }
   return (
     <div className="sidebar">
@@ -90,9 +91,10 @@ function Friendlist({ isopenid, setId, setbill, friendlist, Addtolist }) {
             image={friend.image}
             id={friend.id}
             balance={friend.balance}
-            isopenid={isopenid}
+            isopen={isopenf}
             setId={setId}
             setbill={setbill}
+            friend={friend}
           />
         ))}
       </ul>
@@ -129,8 +131,8 @@ function Friendlist({ isopenid, setId, setbill, friendlist, Addtolist }) {
   );
 }
 
-function Friend({ name, image, id, balance, setId, setbill }) {
-  function handleClick(id) {
+function Friend({ name, image, balance, setId, setbill, friend, isopen, id }) {
+  function handleClick(friend) {
     setbill({
       total: "",
       U_expense: "",
@@ -138,7 +140,7 @@ function Friend({ name, image, id, balance, setId, setbill }) {
       Paying_user: "you",
     });
     console.log("Bill state reset");
-    setId((i) => (i === id ? null : id));
+    setId((i) => (i === friend ? null : friend));
   }
   return (
     <li>
@@ -153,8 +155,8 @@ function Friend({ name, image, id, balance, setId, setbill }) {
           ? `You and ${name} are even`
           : ""}
       </p>
-      <button className="button" onClick={() => handleClick(id)}>
-        Select
+      <button className="button" onClick={() => handleClick(friend)}>
+        {isopen?.id === id ? "Close" : "Select"}
       </button>
     </li>
   );
